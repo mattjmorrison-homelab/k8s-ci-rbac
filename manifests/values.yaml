@@ -17,3 +17,15 @@ consumers:
         resources: ["externalsecrets", "secretstores"]
       - apiGroups: ["networking.k8s.io"]
         resources: ["ingresses"]
+
+  - name: grafana-ci
+    namespace: monitoring
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "persistentvolumeclaims"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
