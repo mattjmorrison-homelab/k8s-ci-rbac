@@ -57,3 +57,15 @@ consumers:
         resources: ["ingresses"]
       - apiGroups: ["argoproj.io"]
         resources: ["applications"]
+
+  - name: garage-ci
+    namespace: garage
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "serviceaccounts", "persistentvolumeclaims"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
