@@ -43,3 +43,17 @@ consumers:
         resources: ["externalsecrets", "secretstores"]
       - apiGroups: ["networking.k8s.io"]
         resources: ["ingresses"]
+
+  - name: argocd-ci
+    namespace: argocd
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "serviceaccounts"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+      - apiGroups: ["argoproj.io"]
+        resources: ["applications"]
