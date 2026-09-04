@@ -69,3 +69,13 @@ consumers:
         resources: ["jobs"]
       - apiGroups: ["external-secrets.io"]
         resources: ["externalsecrets", "secretstores"]
+
+  - name: github-runner-ci
+    namespace: github-runner
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "serviceaccounts"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
