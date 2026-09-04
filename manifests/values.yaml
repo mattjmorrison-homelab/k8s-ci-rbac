@@ -29,3 +29,17 @@ consumers:
         resources: ["jobs"]
       - apiGroups: ["networking.k8s.io"]
         resources: ["ingresses"]
+
+  - name: alertmanager-ci
+    namespace: monitoring
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "serviceaccounts"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
