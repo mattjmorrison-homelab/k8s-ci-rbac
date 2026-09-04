@@ -1,0 +1,19 @@
+# One entry per repo needing a CI identity for actions-helm's dry-run
+# check. `rules` lists the exact apiGroups/resources that repo's chart
+# actually renders -- not a wildcard -- so this ServiceAccount's real
+# (if short-lived) create/patch access is scoped to only what it needs.
+# See README.md for how to add a new consumer.
+consumers:
+  - name: prometheus-ci
+    namespace: monitoring
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "serviceaccounts"]
+      - apiGroups: ["apps"]
+        resources: ["statefulsets"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]

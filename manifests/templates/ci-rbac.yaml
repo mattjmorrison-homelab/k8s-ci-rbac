@@ -1,0 +1,67 @@
+{{- range .Values.consumers }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ .name }}
+  namespace: {{ .namespace }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .name }}-writer
+  namespace: {{ .namespace }}
+rules:
+  {{- range .rules }}
+  - apiGroups: {{ .apiGroups | toYaml | nindent 6 }}
+    resources: {{ .resources | toYaml | nindent 6 }}
+    verbs: ["get", "list", "create", "patch"]
+  {{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .name }}-writer
+  namespace: {{ .namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ .name }}
+    namespace: {{ .namespace }}
+roleRef:
+  kind: Role
+  name: {{ .name }}-writer
+  apiGroup: rbac.authorization.k8s.io
+---
+# Narrow, separate from the writer Role above: only lets the *shared*
+# runner identity (github-runner-workload, used by every repo's CI) mint
+# a short-lived token for this one consumer's CI ServiceAccount --
+# nothing else. The runner identity itself never gains direct write
+# access; only {{ .name }} does, and only for as long as a freshly
+# minted token (10 minutes) lasts.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ .name }}-token-issuer
+  namespace: {{ .namespace }}
+rules:
+  - apiGroups: [""]
+    resources: ["serviceaccounts/token"]
+    verbs: ["create"]
+    resourceNames: ["{{ .name }}"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ .name }}-token-issuer
+  namespace: {{ .namespace }}
+  labels:
+    ci-namespace: {{ .namespace }}
+subjects:
+  - kind: ServiceAccount
+    name: github-runner-workload
+    namespace: github-runner
+roleRef:
+  kind: Role
+  name: {{ .name }}-token-issuer
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}

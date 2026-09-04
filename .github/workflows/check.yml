@@ -1,0 +1,21 @@
+name: Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check:
+    runs-on: k8s-amd64
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      # No shared dry-run CI action here (unlike other k8s-*/homelab-* repos):
+      # this repo generates the RBAC that that shared action's server-side
+      # dry-run itself depends on for every consumer, so a dry-run against a
+      # live namespace here would be circular. `helm lint` is the check for
+      # this repo instead.
+      - uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+        with:
+          version: "v3.21.4"
+      - name: Lint chart
+        run: helm lint manifests
