@@ -79,3 +79,15 @@ consumers:
         resources: ["deployments"]
       - apiGroups: ["external-secrets.io"]
         resources: ["externalsecrets", "secretstores"]
+
+# One entry per repo that needs to create real Kubernetes Jobs (to build/
+# push images via kaniko, or run tests inside just-built images) -- unlike
+# every consumer above, this grants REAL create/delete of live Jobs, not a
+# --dry-run=server wrapper. See manifests/templates/job-service-account-rbac.yaml.
+jobServiceAccounts:
+  - name: graph-router-job
+    namespace: github-runner
+  - name: graph-hdmi-switch-job
+    namespace: github-runner
+  - name: ui-hdmi-switch-job
+    namespace: github-runner
