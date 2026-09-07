@@ -173,11 +173,17 @@ consumers:
     namespace: cert-manager
     rules:
       - apiGroups: ["cert-manager.io"]
-        resources: ["certificates", "clusterissuers"]
+        resources: ["certificates"]
       - apiGroups: ["traefik.io"]
         resources: ["tlsstores"]
       - apiGroups: ["external-secrets.io"]
         resources: ["externalsecrets", "secretstores"]
+    # ClusterIssuer is cluster-scoped -- a namespaced Role can never grant
+    # it no matter what's in `rules` above.
+    clusterRules:
+      - apiGroups: ["cert-manager.io"]
+        resources: ["clusterissuers"]
+        resourceNames: ["letsencrypt-prod", "letsencrypt-staging"]
 
   # Explicit name -- "argocd-ci" is already taken by k8s-argocd itself.
   - name: argocd-image-updater-ci
@@ -191,14 +197,21 @@ consumers:
         resources: ["jobs"]
       - apiGroups: ["external-secrets.io"]
         resources: ["externalsecrets", "secretstores"]
-      - apiGroups: ["rbac.authorization.k8s.io"]
-        resources: ["clusterroles", "clusterrolebindings", "roles", "rolebindings"]
-      - apiGroups: ["apiextensions.k8s.io"]
-        resources: ["customresourcedefinitions"]
       - apiGroups: ["argocd-image-updater.argoproj.io"]
         resources: ["imageupdaters"]
       - apiGroups: ["networking.k8s.io"]
         resources: ["networkpolicies"]
+    # Role/RoleBinding/ClusterRole/ClusterRoleBinding are always filtered
+    # out of the dry-run entirely (actions-helm's own check.sh -- RBAC
+    # escalation prevention), so no rule for them is needed here even
+    # though the chart renders its own controller Role/RoleBinding.
+    # CustomResourceDefinition is cluster-scoped -- can't go in `rules`
+    # above no matter what, same reasoning as cert-manager-config-ci's
+    # clusterissuers.
+    clusterRules:
+      - apiGroups: ["apiextensions.k8s.io"]
+        resources: ["customresourcedefinitions"]
+        resourceNames: ["imageupdaters.argocd-image-updater.argoproj.io"]
 
   # Explicit name -- kube-system also hosts k8s-traefik-ci below; the
   # default "kube-system-ci" would collide between the two.
