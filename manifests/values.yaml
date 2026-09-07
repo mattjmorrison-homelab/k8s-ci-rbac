@@ -92,6 +92,169 @@ consumers:
       - apiGroups: ["networking.k8s.io"]
         resources: ["ingresses"]
 
+  - name: hdmi-switch-ci
+    namespace: hdmi-switch
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "serviceaccounts"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+
+  - name: graphql-router-ci
+    namespace: graphql-router
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "serviceaccounts"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+
+  - name: pihole-ci
+    namespace: pihole
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "persistentvolumeclaims"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+
+  - name: cloudflare-ci
+    namespace: cloudflare
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "serviceaccounts"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
+
+  - name: matter-server-ci
+    namespace: matter-server
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "persistentvolumeclaims"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+
+  - name: home-assistant-ci
+    namespace: home-assistant
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "persistentvolumeclaims"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+
+  # Explicit name, not the "cert-manager-ci" default -- k8s-cert-manager
+  # (the vendored upstream chart itself) will also want a consumer in
+  # this same namespace eventually, and the two must not collide.
+  - name: cert-manager-config-ci
+    namespace: cert-manager
+    rules:
+      - apiGroups: ["cert-manager.io"]
+        resources: ["certificates", "clusterissuers"]
+      - apiGroups: ["traefik.io"]
+        resources: ["tlsstores"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
+
+  # Explicit name -- "argocd-ci" is already taken by k8s-argocd itself.
+  - name: argocd-image-updater-ci
+    namespace: argocd
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "serviceaccounts", "secrets"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
+      - apiGroups: ["rbac.authorization.k8s.io"]
+        resources: ["clusterroles", "clusterrolebindings", "roles", "rolebindings"]
+      - apiGroups: ["apiextensions.k8s.io"]
+        resources: ["customresourcedefinitions"]
+      - apiGroups: ["argocd-image-updater.argoproj.io"]
+        resources: ["imageupdaters"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["networkpolicies"]
+
+  # Explicit name -- kube-system also hosts k8s-traefik-ci below; the
+  # default "kube-system-ci" would collide between the two.
+  - name: coredns-ci
+    namespace: kube-system
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+
+  - name: traefik-ci
+    namespace: kube-system
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["helm.cattle.io"]
+        resources: ["helmchartconfigs"]
+
+  # Explicit names -- monitoring already hosts prometheus-ci/grafana-ci/
+  # alertmanager-ci; the default "monitoring-ci" would collide with any
+  # of them (and with each other, across these three new consumers).
+  - name: speedtest-exporter-ci
+    namespace: monitoring
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+
+  - name: node-exporter-ci
+    namespace: monitoring
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services"]
+      - apiGroups: ["apps"]
+        resources: ["daemonsets"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+
+  - name: kube-state-metrics-ci
+    namespace: monitoring
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "serviceaccounts"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["rbac.authorization.k8s.io"]
+        resources: ["clusterroles", "clusterrolebindings"]
+
 # One entry per repo that needs to create real Kubernetes Jobs (to build/
 # push images via kaniko, or run tests inside just-built images) -- unlike
 # every consumer above, this grants REAL create/delete of live Jobs, not a
