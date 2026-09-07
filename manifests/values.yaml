@@ -92,6 +92,35 @@ consumers:
       - apiGroups: ["networking.k8s.io"]
         resources: ["ingresses"]
 
+  # k8s-openbao/k8s-external-secrets/k8s-cert-manager only own a small
+  # verify/ subchart (ConfigMap + Job) -- the real app chart is a
+  # vendored upstream one, dry-run doesn't apply to it the same way, see
+  # each repo's own check.yml for the separate helm-template-only check
+  # against that upstream chart with this repo's real values.yaml.
+  - name: openbao-ci
+    namespace: openbao
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+
+  - name: external-secrets-ci
+    namespace: external-secrets
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+
+  - name: cert-manager-ci
+    namespace: cert-manager
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+
   - name: hdmi-switch-ci
     namespace: hdmi-switch
     rules:
