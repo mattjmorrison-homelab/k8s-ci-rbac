@@ -31,6 +31,43 @@ roleRef:
   kind: Role
   name: {{ .name }}-writer
   apiGroup: rbac.authorization.k8s.io
+{{- if .clusterRules }}
+---
+# Cluster-scoped resources (CustomResourceDefinition, ClusterIssuer,
+# ClusterRole, etc.) can never be granted by a namespaced Role/RoleBinding
+# no matter what's listed in its rules -- confirmed directly against a
+# real dry-run ("... is forbidden ... at the cluster scope" even though
+# the resource was already listed in the namespaced Role above). Only
+# set clusterRules for the specific cluster-scoped kinds a consumer's
+# chart actually renders, scoped with resourceNames wherever the kind
+# supports it so one consumer's CI can never touch another's.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ .name }}-writer-cluster
+rules:
+  {{- range .clusterRules }}
+  - apiGroups: {{ .apiGroups | toYaml | nindent 6 }}
+    resources: {{ .resources | toYaml | nindent 6 }}
+    {{- if .resourceNames }}
+    resourceNames: {{ .resourceNames | toYaml | nindent 6 }}
+    {{- end }}
+    verbs: ["get", "list", "create", "patch"]
+  {{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ .name }}-writer-cluster
+subjects:
+  - kind: ServiceAccount
+    name: {{ .name }}
+    namespace: {{ .namespace }}
+roleRef:
+  kind: ClusterRole
+  name: {{ .name }}-writer-cluster
+  apiGroup: rbac.authorization.k8s.io
+{{- end }}
 ---
 # Narrow, separate from the writer Role above: only lets the *shared*
 # runner identity (github-runner-workload, used by every repo's CI) mint
