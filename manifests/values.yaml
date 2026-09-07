@@ -172,10 +172,6 @@ consumers:
   - name: cert-manager-config-ci
     namespace: cert-manager
     rules:
-      - apiGroups: ["cert-manager.io"]
-        resources: ["certificates"]
-      - apiGroups: ["traefik.io"]
-        resources: ["tlsstores"]
       - apiGroups: ["external-secrets.io"]
         resources: ["externalsecrets", "secretstores"]
     # ClusterIssuer is cluster-scoped -- a namespaced Role can never grant
@@ -184,6 +180,18 @@ consumers:
       - apiGroups: ["cert-manager.io"]
         resources: ["clusterissuers"]
         resourceNames: ["letsencrypt-prod", "letsencrypt-staging"]
+    # The wildcard cert and its TLSStore live in kube-system (so
+    # traefik's ingress controller can read them), not this repo's own
+    # cert-manager namespace -- needs a Role actually created there.
+    extraNamespaceRules:
+      - namespace: kube-system
+        rules:
+          - apiGroups: ["cert-manager.io"]
+            resources: ["certificates"]
+            resourceNames: ["wildcard-morrisons-site"]
+          - apiGroups: ["traefik.io"]
+            resources: ["tlsstores"]
+            resourceNames: ["default"]
 
   # Explicit name -- "argocd-ci" is already taken by k8s-argocd itself.
   - name: argocd-image-updater-ci
