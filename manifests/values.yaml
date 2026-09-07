@@ -121,6 +121,34 @@ consumers:
       - apiGroups: ["batch"]
         resources: ["jobs"]
 
+  # CRD-only repos: no Helm chart, nothing namespaced to grant --
+  # CustomResourceDefinition is cluster-scoped, hence clusterRules only.
+  # Explicit names: cert-manager/external-secrets namespaces already
+  # host other consumers.
+  - name: cert-manager-crds-ci
+    namespace: cert-manager
+    rules: []
+    clusterRules:
+      - apiGroups: ["apiextensions.k8s.io"]
+        resources: ["customresourcedefinitions"]
+        resourceNames:
+          - challenges.acme.cert-manager.io
+          - orders.acme.cert-manager.io
+          - certificaterequests.cert-manager.io
+          - certificates.cert-manager.io
+          - clusterissuers.cert-manager.io
+          - issuers.cert-manager.io
+
+  - name: external-secrets-crds-ci
+    namespace: external-secrets
+    rules: []
+    clusterRules:
+      - apiGroups: ["apiextensions.k8s.io"]
+        resources: ["customresourcedefinitions"]
+        resourceNames:
+          - secretstores.external-secrets.io
+          - clustersecretstores.external-secrets.io
+
   - name: hdmi-switch-ci
     namespace: hdmi-switch
     rules:
