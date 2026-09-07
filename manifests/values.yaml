@@ -80,6 +80,18 @@ consumers:
       - apiGroups: ["external-secrets.io"]
         resources: ["externalsecrets", "secretstores"]
 
+  - name: homepage-ci
+    namespace: homepage
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+
 # One entry per repo that needs to create real Kubernetes Jobs (to build/
 # push images via kaniko, or run tests inside just-built images) -- unlike
 # every consumer above, this grants REAL create/delete of live Jobs, not a
