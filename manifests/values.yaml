@@ -360,3 +360,5 @@ jobServiceAccounts:
     namespace: github-runner
   - name: app-backstage-job
     namespace: github-runner
+  - name: docker-backstage-job
+    namespace: github-runner
