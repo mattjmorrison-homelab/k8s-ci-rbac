@@ -327,7 +327,7 @@ consumers:
       - apiGroups: [""]
         resources: ["configmaps", "services", "serviceaccounts"]
       - apiGroups: ["apps"]
-        resources: ["statefulsets"]
+        resources: ["deployments", "statefulsets"]
       - apiGroups: ["batch"]
         resources: ["jobs"]
       - apiGroups: ["external-secrets.io"]
