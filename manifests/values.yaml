@@ -321,6 +321,20 @@ consumers:
       - apiGroups: ["batch"]
         resources: ["jobs"]
 
+  - name: backstage-ci
+    namespace: backstage
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "serviceaccounts"]
+      - apiGroups: ["apps"]
+        resources: ["statefulsets"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+
   - name: kube-state-metrics-ci
     namespace: monitoring
     rules:
@@ -343,4 +357,6 @@ jobServiceAccounts:
   - name: graph-hdmi-switch-job
     namespace: github-runner
   - name: ui-hdmi-switch-job
+    namespace: github-runner
+  - name: app-backstage-job
     namespace: github-runner
