@@ -1,0 +1,11 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: k8s-ci-rbac
+  annotations:
+    github.com/project-slug: mattjmorrison-homelab/k8s-ci-rbac
+spec:
+  type: deployment-config
+  owner: mattjmorrison-homelab
+  lifecycle: experimental
+  system: rbac
