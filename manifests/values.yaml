@@ -347,6 +347,20 @@ consumers:
       - apiGroups: ["rbac.authorization.k8s.io"]
         resources: ["clusterroles", "clusterrolebindings"]
 
+  - name: ad-reporter-ci
+    namespace: ad-reporter
+    rules:
+      - apiGroups: [""]
+        resources: ["configmaps", "services", "serviceaccounts", "persistentvolumeclaims"]
+      - apiGroups: ["apps"]
+        resources: ["deployments"]
+      - apiGroups: ["batch"]
+        resources: ["jobs"]
+      - apiGroups: ["external-secrets.io"]
+        resources: ["externalsecrets", "secretstores"]
+      - apiGroups: ["networking.k8s.io"]
+        resources: ["ingresses"]
+
 # One entry per repo that needs to create real Kubernetes Jobs (to build/
 # push images via kaniko, or run tests inside just-built images) -- unlike
 # every consumer above, this grants REAL create/delete of live Jobs, not a
@@ -361,4 +375,8 @@ jobServiceAccounts:
   - name: app-backstage-job
     namespace: github-runner
   - name: docker-backstage-job
+    namespace: github-runner
+  - name: graph-ad-reporter-job
+    namespace: github-runner
+  - name: ui-ad-reporter-job
     namespace: github-runner
