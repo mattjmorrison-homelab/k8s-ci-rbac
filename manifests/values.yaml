@@ -387,4 +387,4 @@ jobServiceAccounts:
 # restartTrigger: a plain kubectl edit isn't used here -- every change to
 # what's running in the cluster goes through a git commit ArgoCD syncs,
 # never a direct cluster command.
-forceSyncTrigger: "2026-11-10-force-refresh-ad-reporter-zot-credentials"
+forceSyncTrigger: "2026-11-10-force-refresh-ad-reporter-zot-credentials-2"

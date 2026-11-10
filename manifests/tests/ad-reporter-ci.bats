@@ -94,11 +94,11 @@ setup() {
     select(.kind == "ExternalSecret" and .metadata.name == "graph-ad-reporter-zot-pull-secret") |
     .metadata.annotations["force-sync"]
   ' -)
-  [ "$graph_annotation" = "2026-11-10-force-refresh-ad-reporter-zot-credentials" ]
+  [ "$graph_annotation" = "2026-11-10-force-refresh-ad-reporter-zot-credentials-2" ]
 
   ui_annotation=$(echo "$RENDERED" | yq eval-all '
     select(.kind == "ExternalSecret" and .metadata.name == "ui-ad-reporter-zot-pull-secret") |
     .metadata.annotations["force-sync"]
   ' -)
-  [ "$ui_annotation" = "2026-11-10-force-refresh-ad-reporter-zot-credentials" ]
+  [ "$ui_annotation" = "2026-11-10-force-refresh-ad-reporter-zot-credentials-2" ]
 }
