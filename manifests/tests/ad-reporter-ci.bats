@@ -88,3 +88,17 @@ setup() {
   ui_rb=$(echo "$RENDERED" | awk 'BEGIN{RS="---\n"} /kind: RoleBinding/ && /name: ui-ad-reporter-job-token-issuer/')
   [[ "$ui_rb" == *"ci-namespace: github-runner"* ]]
 }
+
+@test "graph-ad-reporter-job and ui-ad-reporter-job zot-pull-secret ExternalSecrets carry the forceSyncTrigger force-sync annotation" {
+  graph_annotation=$(echo "$RENDERED" | yq eval-all '
+    select(.kind == "ExternalSecret" and .metadata.name == "graph-ad-reporter-zot-pull-secret") |
+    .metadata.annotations["force-sync"]
+  ' -)
+  [ "$graph_annotation" = "2026-11-10-force-refresh-ad-reporter-zot-credentials" ]
+
+  ui_annotation=$(echo "$RENDERED" | yq eval-all '
+    select(.kind == "ExternalSecret" and .metadata.name == "ui-ad-reporter-zot-pull-secret") |
+    .metadata.annotations["force-sync"]
+  ' -)
+  [ "$ui_annotation" = "2026-11-10-force-refresh-ad-reporter-zot-credentials" ]
+}

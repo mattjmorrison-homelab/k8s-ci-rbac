@@ -380,3 +380,11 @@ jobServiceAccounts:
     namespace: github-runner
   - name: ui-ad-reporter-job
     namespace: github-runner
+
+# Bump this to any new string to force every jobServiceAccounts entry's
+# zot-pull-secret ExternalSecret to refresh immediately, regardless of
+# its 1h refreshInterval. Same convention as k8s-zot's/k8s-github-runner's
+# restartTrigger: a plain kubectl edit isn't used here -- every change to
+# what's running in the cluster goes through a git commit ArgoCD syncs,
+# never a direct cluster command.
+forceSyncTrigger: "2026-11-10-force-refresh-ad-reporter-zot-credentials"
